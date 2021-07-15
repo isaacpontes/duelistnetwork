@@ -27,16 +27,22 @@ export function AlurakutMenu({ githubUser }) {
         <AlurakutMenu.Logo src={`${BASE_URL}/logo.svg`} />
 
         <nav style={{ flex: 1 }}>
-          {[{ name: 'Inicio', slug: '/' }, { name: 'Amigos', slug: '/amigos' }, { name: 'Comunidades', slug: '/comunidades' }].map((menuItem) => (
-            <Link key={`key__${menuItem.name.toLocaleLowerCase()}`} href={`${menuItem.slug.toLocaleLowerCase()}`}>
-              {menuItem.name}
-            </Link>
-          ))}
+          {[
+            { name: 'Inicio', slug: '/' },
+            { name: 'Amigos', slug: '/amigos' },
+            { name: 'Comunidades', slug: '/comunidades' }].map((menuItem) => (
+              <Link
+                key={`key__${menuItem.name.toLocaleLowerCase()}`}
+                href={`${menuItem.slug.toLocaleLowerCase()}`}
+              >
+                {menuItem.name}
+              </Link>
+            ))}
         </nav>
 
         <nav>
           <div>
-            <input placeholder="Pesquisar no Orkut" />
+            <input placeholder="Pesquisar" />
           </div>
           <a href={`/logout`}>
             Sair
@@ -54,7 +60,7 @@ export function AlurakutMenu({ githubUser }) {
 }
 AlurakutMenu.Wrapper = styled.header`
   width: 100%;
-  background-color: #308BC5;
+  background-color: #202930;
 
   .alurakutMenuProfileSidebar {
     background: white;
@@ -96,7 +102,7 @@ AlurakutMenu.Wrapper = styled.header`
   }
 
   .container {
-    background-color: #308BC5;
+    background-color: #202930;
     padding: 7px 16px;
     max-width: 1110px;
     margin: auto;
@@ -145,8 +151,9 @@ AlurakutMenu.Wrapper = styled.header`
     }
     input {
       color: #ffffff;
-      background: #5579A1;
+      background: #6e7077;
       padding: 10px 42px;
+      margin-right: 16px;
       border: 0;
       background-image: url(${`${BASE_URL}/icons/search.svg`});
       background-position: 15px center;
@@ -163,6 +170,7 @@ AlurakutMenu.Wrapper = styled.header`
 AlurakutMenu.Logo = styled.img`
   background-color: #ffffff;
   padding: 9px 14px;
+  margin-right: 16px;
   border-radius: 1000px;
   height: 34px;
 `;
@@ -171,7 +179,7 @@ function AlurakutMenuProfileSidebar({ githubUser }) {
   return (
     <div className="alurakutMenuProfileSidebar">
       <div>
-        <img src={`https://github.com/${githubUser}.png`} style={{ borderRadius: '8px' }} />
+        <img src={`https://github.com/${githubUser}.png`} style={{ borderRadius: '8px', maxHeight: '128px' }} />
         <hr />
         <p>
           <a className="boxLink" href={`/user/${githubUser}`}>
