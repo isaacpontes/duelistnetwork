@@ -3,20 +3,27 @@ import Box from '../src/components/Box';
 import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProfileSidebar from '../src/components/ProfileSidebar';
+import { queryAllCommunities } from '../src/services/communities';
 
 export default function Home() {
   const usuarioAleatorio = 'isaacpontes';
   const [communities, setCommunities] = useState([]);
-  const pessoasFavoritas = [
-    'juunegreiros',
-    'omariosouto',
-    'peas',
-    'rafaballerini',
-    'marcobrunodev',
-    'felipefialho'
-  ];
+  const [communitiesCount, setCommunitiesCount] = useState(0);
+  const [followers, setFollowers] = useState([]);
+
+  useEffect(async () => {
+    const githubResponse = await fetch(`https://api.github.com/users/${usuarioAleatorio}/followers`).then(data => data.json());
+
+    const userFollowers = githubResponse.map(user => user.login)
+
+    setFollowers(userFollowers);
+
+    const data = await queryAllCommunities();
+    setCommunities(data.allCommunities);
+    setCommunitiesCount(data._allCommunitiesMeta.count);
+  }, []);
 
   function handleCreateCommunity(event) {
     event.preventDefault();
@@ -24,8 +31,8 @@ export default function Home() {
 
     const newCommunity = {
       id: new Date().toISOString,
-      name: formData.get('title'),
-      image: formData.get('image')
+      title: formData.get('title'),
+      imageUrl: formData.get('image')
     }
     const updatedCommunities = [...communities, newCommunity];
     setCommunities(updatedCommunities);
@@ -82,16 +89,16 @@ export default function Home() {
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Amigos ({pessoasFavoritas.length})
+              Amigos ({followers.length})
             </h2>
 
             <ul>
-              {pessoasFavoritas.map((itemAtual, index) => {
+              {followers.map((follower) => {
                 return (
-                  <li key={index}>
-                    <a href={`/users/${itemAtual}`}>
-                      <img src={`https://github.com/${itemAtual}.png`} />
-                      <span>{itemAtual}</span>
+                  <li key={follower}>
+                    <a href={`/users/${follower}`}>
+                      <img src={`https://github.com/${follower}.png`} />
+                      <span>{follower}</span>
                     </a>
                   </li>
                 )
@@ -106,16 +113,16 @@ export default function Home() {
           </ProfileRelationsBoxWrapper>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Comunidades ({communities.length})
+              Comunidades ({communitiesCount})
             </h2>
 
             <ul>
               {communities.map((community) => {
                 return (
                   <li key={community.id}>
-                    <a href={`/communities/${community.name}`}>
-                      <img src={community.image} alt={community.name} />
-                      <span>{community.name}</span>
+                    <a href={`/communities/${community.title}`}>
+                      <img src={community.imageUrl} alt={community.title} />
+                      <span>{community.title}</span>
                     </a>
                   </li>
                 )
