@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import ProfileSidebar from '../src/components/ProfileSidebar';
 import { queryAllCommunities, saveCommunity } from '../src/services/communities';
 import { OrkutNostalgicIconSet } from '../src/components/OrkutNostalgicIconSet';
-import slugify from '../src/lib/Slugify';
+import slugify from '../src/lib/slugify';
 
 export default function Home({ communitiesData }) {
   const usuarioAleatorio = 'isaacpontes';
