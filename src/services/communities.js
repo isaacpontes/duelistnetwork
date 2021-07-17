@@ -1,4 +1,4 @@
-const token = process.env.NEXT_PUBLIC_DATO_API_TOKEN;
+const token = process.env.DATO_READ_ONLY_API_TOKEN;
 
 async function queryAllCommunities() {
     const communities = await fetch(
@@ -11,7 +11,17 @@ async function queryAllCommunities() {
                 'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
-                query: '{ allCommunities(first: 6) { id title imageUrl } _allCommunitiesMeta { count } }'
+                query: `{
+                    allCommunities(first: 6) {
+                        id
+                        title
+                        imageUrl
+                        slug
+                    }
+                    _allCommunitiesMeta {
+                        count
+                    }
+                }`
             }),
         })
         .then(res => res.json())
@@ -22,4 +32,16 @@ async function queryAllCommunities() {
     return communities.data;
 }
 
-export { queryAllCommunities };
+async function saveCommunity(community) {
+    const data = await fetch('/api/communities', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(community)
+    }).then(response => response.json());
+
+    return data;
+}
+
+export { queryAllCommunities, saveCommunity };

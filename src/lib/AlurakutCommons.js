@@ -28,9 +28,9 @@ export function AlurakutMenu({ githubUser }) {
 
         <nav style={{ flex: 1 }}>
           {[
-            { name: 'Inicio', slug: '/' },
-            { name: 'Amigos', slug: '/amigos' },
-            { name: 'Comunidades', slug: '/comunidades' }].map((menuItem) => (
+            { name: 'Home', slug: '/' },
+            { name: 'Friends', slug: '/friends' },
+            { name: 'Communities', slug: '/communities' }].map((menuItem) => (
               <Link
                 key={`key__${menuItem.name.toLocaleLowerCase()}`}
                 href={`${menuItem.slug.toLocaleLowerCase()}`}
@@ -42,7 +42,7 @@ export function AlurakutMenu({ githubUser }) {
 
         <nav>
           <div>
-            <input placeholder="Pesquisar" />
+            <input placeholder="Search" />
           </div>
           <a href={`/logout`}>
             Sair
@@ -203,15 +203,15 @@ export function AlurakutProfileSidebarMenuDefault() {
       <nav>
         <a href="/">
           <img src={`${BASE_URL}/icons/user.svg`} />
-          Perfil
+          Profile
         </a>
         <a href="/">
           <img src={`${BASE_URL}/icons/book.svg`} />
-          Recados
+          Duel Log
         </a>
         <a href="/">
           <img src={`${BASE_URL}/icons/camera.svg`} />
-          Fotos
+          Photos
         </a>
         <a href="/">
           <img src={`${BASE_URL}/icons/sun.svg`} />

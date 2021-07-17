@@ -1,13 +1,15 @@
 import MainGrid from '../src/components/MainGrid';
 import Box from '../src/components/Box';
-import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/AlurakutCommons';
+import { AlurakutMenu, AlurakutProfileSidebarMenuDefault } from '../src/lib/AlurakutCommons';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import ProfileSidebar from '../src/components/ProfileSidebar';
-import { queryAllCommunities } from '../src/services/communities';
+import { queryAllCommunities, saveCommunity } from '../src/services/communities';
+import { OrkutNostalgicIconSet } from '../src/components/OrkutNostalgicIconSet';
+import slugify from '../src/lib/Slugify';
 
-export default function Home() {
+export default function Home({ communitiesData }) {
   const usuarioAleatorio = 'isaacpontes';
   const [communities, setCommunities] = useState([]);
   const [communitiesCount, setCommunitiesCount] = useState(0);
@@ -20,21 +22,29 @@ export default function Home() {
 
     setFollowers(userFollowers);
 
-    const data = await queryAllCommunities();
-    setCommunities(data.allCommunities);
-    setCommunitiesCount(data._allCommunitiesMeta.count);
+    setCommunities(communitiesData.allCommunities);
+    setCommunitiesCount(communitiesData._allCommunitiesMeta.count);
   }, []);
 
-  function handleCreateCommunity(event) {
+  async function handleCreateCommunity(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
 
+    const title = formData.get('title');
+    const imageUrl = formData.get('image');
+    const slug = slugify(title);
+
     const newCommunity = {
-      id: new Date().toISOString,
-      title: formData.get('title'),
-      imageUrl: formData.get('image')
+      title,
+      imageUrl,
+      slug
     }
-    const updatedCommunities = [...communities, newCommunity];
+
+    const data = await saveCommunity(newCommunity);
+
+    const communitiesToUpdate = communities;
+    communitiesToUpdate.pop();
+    const updatedCommunities = [data.newRecord, ...communitiesToUpdate];
     setCommunities(updatedCommunities);
 
     event.target.reset();
@@ -54,7 +64,7 @@ export default function Home() {
               Bem vindo(a)
             </h1>
 
-            <OrkutNostalgicIconSet />
+            <OrkutNostalgicIconSet confiavel={3} legal={2} sexy={1} />
           </Box>
 
           <Box>
@@ -120,7 +130,7 @@ export default function Home() {
               {communities.map((community) => {
                 return (
                   <li key={community.id}>
-                    <a href={`/communities/${community.title}`}>
+                    <a href={`/communities/${community.slug}`}>
                       <img src={community.imageUrl} alt={community.title} />
                       <span>{community.title}</span>
                     </a>
@@ -139,4 +149,14 @@ export default function Home() {
       </MainGrid>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const communitiesData = await queryAllCommunities();
+
+  return {
+    props: {
+      communitiesData
+    },
+  }
 }
