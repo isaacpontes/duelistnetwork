@@ -5,6 +5,7 @@ import { AlurakutMenu } from '../src/lib/AlurakutCommons';
 import nookies from 'nookies';
 import styled from 'styled-components';
 import { addFriend, queryAllProfiles, queryUser } from '../src/services/users';
+import { useRouter } from 'next/router';
 
 const Container = styled.div`
   padding: 2rem 1rem;
@@ -98,6 +99,7 @@ const EntriesGrid = styled.ul`
 `;
 
 export default function Profiles({ user, allProfiles, currentGoogleUser }) {
+  const router = useRouter();
   const [profiles, setProfiles] = useState([]);
 
   useEffect(async () => {
@@ -116,7 +118,7 @@ export default function Profiles({ user, allProfiles, currentGoogleUser }) {
             {profiles?.map((profile) => {
               return (
                 <li key={profile.id}>
-                  <a href={`/profiles/${profile.googleId}`}>
+                  <a href={`/profiles/${profile.id}`}>
                     <img src={profile.avatarUrl} alt={profile.name} />
                     <span>{profile.name}</span>
                   </a>
@@ -128,8 +130,11 @@ export default function Profiles({ user, allProfiles, currentGoogleUser }) {
                       const friendFriends = profile.friends.map(item => item.id);
                       const friendFriendsToUpdate = [...friendFriends, user.id];
 
-                      addFriend(user.id, userFriendsToUpdate, profile.id, friendFriendsToUpdate);
-                      alert(`Você agora é amigo de ${profile.name}`);
+                      addFriend(user.id, userFriendsToUpdate, profile.id, friendFriendsToUpdate)
+                        .then(response => {
+                          router.push('/');
+                          return response && alert(`Você agora é amigo de ${profile.name}`);
+                        });
                     }}
                   >
                     Adicionar

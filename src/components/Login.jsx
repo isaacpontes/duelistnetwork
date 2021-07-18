@@ -59,7 +59,7 @@ export default function Login() {
       >
         <img src="/google.svg" alt="google login" height="20" width="20"></img>
 
-        <span className="buttonText">Sign in with Google</span>
+        <span className="buttonText">Entre com o Google</span>
       </button>
     </form>
   )

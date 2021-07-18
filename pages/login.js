@@ -11,11 +11,11 @@ export default function LoginScreen() {
     <main style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <div className="loginScreen">
         <section className="logoArea">
-          <img src="https://alurakut.vercel.app/logo.svg" />
+          <img src="/logo.svg" />
 
-          <p><strong>Conecte-se</strong> aos seus amigos e familiares usando recados e mensagens instantâneas</p>
+          <p><strong>Conecte-se</strong> aos seus amigos e rivais duelistas</p>
           <p><strong>Conheça</strong> novas pessoas através de amigos de seus amigos e comunidades</p>
-          <p><strong>Compartilhe</strong> seus vídeos, fotos e paixões em um só lugar</p>
+          <p><strong>Compartilhe</strong> suas vitórias, derrotas e decklists (ou só as suas histórias engraçadas) em um só lugar</p>
         </section>
 
         <section className="formArea">
@@ -69,7 +69,7 @@ export default function LoginScreen() {
             </div>
           </div>
 
-          <footer className="box">
+          {/* <footer className="box">
             <p>
               Ainda não é membro? <br />
               <a href="/login">
@@ -78,7 +78,7 @@ export default function LoginScreen() {
                 </strong>
               </a>
             </p>
-          </footer>
+          </footer> */}
         </section>
 
         <footer className="footerArea">

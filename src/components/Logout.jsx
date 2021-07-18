@@ -33,7 +33,7 @@ export default function Logout() {
         color: '#ffffff'
       }}
     >
-      Logout
+      Sair
     </button>
   )
 }

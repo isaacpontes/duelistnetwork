@@ -25,7 +25,9 @@ export function AlurakutMenu({ currentGoogleUser }) {
   return (
     <AlurakutMenu.Wrapper isMenuOpen={isMenuOpen}>
       <div className="container">
-        <AlurakutMenu.Logo src={`${BASE_URL}/logo.svg`} />
+        <Link href="/">
+          <AlurakutMenu.Logo src="/logo.svg" />
+        </Link>
 
         <nav style={{ flex: 1 }}>
           {[
@@ -60,7 +62,7 @@ export function AlurakutMenu({ currentGoogleUser }) {
 }
 AlurakutMenu.Wrapper = styled.header`
   width: 100%;
-  background-color: #202930;
+  background-color: #308BC5;
 
   .alurakutMenuProfileSidebar {
     background: white;
@@ -102,7 +104,7 @@ AlurakutMenu.Wrapper = styled.header`
   }
 
   .container {
-    background-color: #202930;
+    background-color: #308BC5;
     padding: 7px 16px;
     max-width: 1110px;
     margin: auto;
@@ -151,7 +153,7 @@ AlurakutMenu.Wrapper = styled.header`
     }
     input {
       color: #ffffff;
-      background: #6e7077;
+      background: #5579A1;
       padding: 10px 42px;
       margin-right: 16px;
       border: 0;
@@ -224,10 +226,7 @@ export function AlurakutProfileSidebarMenuDefault() {
           <img src={`${BASE_URL}/icons/plus.svg`} />
           GitHub Trends
         </a>
-        <a href="/logout">
-          <img src={`${BASE_URL}//icons/logout.svg`} />
-          Sair
-        </a>
+        <Logout />
       </nav>
     </AlurakutProfileSidebarMenuDefault.Wrapper>
   )

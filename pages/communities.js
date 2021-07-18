@@ -117,7 +117,7 @@ export default function Communities({ user, allCommunities, currentGoogleUser })
             {communities?.map((community) => {
               return (
                 <li key={community.id}>
-                  <a href={`/communities/${community.slug}`}>
+                  <a href={`/communities/${community.id}`}>
                     <img src={community.imageUrl} alt={community.title} />
                     <span>{community.title}</span>
                   </a>

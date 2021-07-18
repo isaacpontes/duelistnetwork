@@ -3,8 +3,10 @@ import nookies from 'nookies';
 import { queryCommunityById } from "../../src/services/communities";
 import { AlurakutMenu } from "../../src/lib/AlurakutCommons";
 import MainGrid from "../../src/components/MainGrid";
+import { queryProfilesByCommunityId } from "../../src/services/users";
+import { ProfileRelationsBoxWrapper } from "../../src/components/ProfileRelations";
 
-export default function Community({ community, currentGoogleUser }) {
+export default function Community({ community, communityMembers, currentGoogleUser }) {
   return (
     <>
       <AlurakutMenu currentGoogleUser={currentGoogleUser} />
@@ -29,13 +31,30 @@ export default function Community({ community, currentGoogleUser }) {
         </div>
         <div className="welcomeArea" style={{ gridArea: 'welcomeArea' }}>
           <Box>
-
+            <h1 className="title">
+              Últimas Postagens
+            </h1>
           </Box>
         </div>
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
-          <Box>
+          <ProfileRelationsBoxWrapper>
+            <h2 className="smallTitle">
+              Membros da Comunidade
+            </h2>
 
-          </Box>
+            <ul>
+              {communityMembers?.map((member) => {
+                return (
+                  <li key={member.id}>
+                    <a href={`/profiles/${member.id}`}>
+                      <img src={member.avatarUrl} alt={member.name} />
+                      <span>{member.name}</span>
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </ProfileRelationsBoxWrapper>
         </div>
       </MainGrid>
     </>
@@ -59,10 +78,12 @@ export async function getServerSideProps(context) {
   const { id } = context.params;
 
   const community = await queryCommunityById(id);
+  const communityMembers = await queryProfilesByCommunityId(id);
 
   return {
     props: {
       community,
+      communityMembers,
       currentGoogleUser
     },
   }

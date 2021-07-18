@@ -15,9 +15,7 @@ export default async function addFriend(request, response) {
       friends: friendFriends,
     });
 
-    response.status(204);
-
-    return;
+    return response.json({ message: 'OK', updated: true });
   }
 
   response.status(404).json({

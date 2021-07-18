@@ -78,7 +78,7 @@ export default function Home({ user, userFriends, userCommunities, currentGoogle
 
               <Link href="/profiles">
                 <button>
-                  Ver todas as usuários
+                  Ver todas os usuários
                 </button>
               </Link>
             </Box>
@@ -132,7 +132,7 @@ export default function Home({ user, userFriends, userCommunities, currentGoogle
               {friends.slice(0, 6).map((friend) => {
                 return (
                   <li key={friend.id}>
-                    <a href={`/users/${friend.id}`}>
+                    <a href={`/profiles/${friend.id}`}>
                       <img src={friend.avatarUrl} />
                       <span>{friend.name}</span>
                     </a>
