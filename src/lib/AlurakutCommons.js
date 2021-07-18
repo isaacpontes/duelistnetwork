@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import NextLink from 'next/link';
+import Logout from '../components/Logout';
 
 const BASE_URL = 'http://alurakut.vercel.app/';
 const v = '1';
@@ -19,7 +20,7 @@ function Link({ href, children, ...props }) {
 // ================================================================================================================
 // Menu
 // ================================================================================================================
-export function AlurakutMenu({ githubUser }) {
+export function AlurakutMenu({ currentGoogleUser }) {
   const [isMenuOpen, setMenuState] = React.useState(false);
   return (
     <AlurakutMenu.Wrapper isMenuOpen={isMenuOpen}>
@@ -29,7 +30,7 @@ export function AlurakutMenu({ githubUser }) {
         <nav style={{ flex: 1 }}>
           {[
             { name: 'Home', slug: '/' },
-            { name: 'Friends', slug: '/friends' },
+            { name: 'Users', slug: '/profiles' },
             { name: 'Communities', slug: '/communities' }].map((menuItem) => (
               <Link
                 key={`key__${menuItem.name.toLocaleLowerCase()}`}
@@ -44,9 +45,8 @@ export function AlurakutMenu({ githubUser }) {
           <div>
             <input placeholder="Search" />
           </div>
-          <a href={`/logout`}>
-            Sair
-          </a>
+
+          <Logout />
         </nav>
 
         <button onClick={() => setMenuState(!isMenuOpen)}>
@@ -54,7 +54,7 @@ export function AlurakutMenu({ githubUser }) {
           {!isMenuOpen && <img src={`${BASE_URL}/icons/menu-closed.svg?v=${v}`} />}
         </button>
       </div>
-      <AlurakutMenuProfileSidebar githubUser={githubUser} />
+      <AlurakutMenuProfileSidebar currentGoogleUser={currentGoogleUser} />
     </AlurakutMenu.Wrapper>
   )
 }
@@ -164,7 +164,7 @@ AlurakutMenu.Wrapper = styled.header`
         color: #ffffff;
         opacity: 1;
       }
-    } 
+    }
   }
 `;
 AlurakutMenu.Logo = styled.img`
@@ -175,15 +175,15 @@ AlurakutMenu.Logo = styled.img`
   height: 34px;
 `;
 
-function AlurakutMenuProfileSidebar({ githubUser }) {
+function AlurakutMenuProfileSidebar({ currentGoogleUser }) {
   return (
     <div className="alurakutMenuProfileSidebar">
       <div>
-        <img src={`https://github.com/${githubUser}.png`} style={{ borderRadius: '8px', maxHeight: '128px' }} />
+        <img src={currentGoogleUser.imageUrl} style={{ borderRadius: '8px', maxHeight: '128px' }} />
         <hr />
         <p>
-          <a className="boxLink" href={`/user/${githubUser}`}>
-            @{githubUser}
+          <a className="boxLink" href={`/user/${currentGoogleUser.googleId}`}>
+            {currentGoogleUser.name}
           </a>
         </p>
         <hr />
@@ -244,7 +244,7 @@ AlurakutProfileSidebarMenuDefault.Wrapper = styled.div`
     img {
       width: 16px;
       height: 16px;
-      margin-right: 5px; 
+      margin-right: 5px;
     }
   }
 `;
@@ -307,14 +307,14 @@ OrkutNostalgicIconSet.List = styled.ul`
     display: grid;
     grid-template-areas:
       "title title"
-      "number number"; 
-    
+      "number number";
+
     &:not(:last-child) {
       margin-right: 5px;
     }
     .OrkutNostalgicIconSet__title {
       display: block;
-      font-style: italic; 
+      font-style: italic;
     }
     .OrkutNostalgicIconSet__number {
       min-width: 15px;
@@ -356,13 +356,13 @@ const AlurakutLoginScreen = css`
     --gap: 12px;
     --gutter: 16px;
     grid-gap: var(--gap);
-    grid-template-areas: 
+    grid-template-areas:
       "logoArea"
       "formArea"
       "footerArea";
     @media(min-width: 860px) {
       grid-template-columns: 2fr 1fr;
-      grid-template-areas: 
+      grid-template-areas:
               "logoArea formArea"
               "logoArea formArea"
               "footerArea footerArea";
@@ -476,14 +476,14 @@ export const AlurakutStyles = css`
     width: 8px;
   }
   *::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: #f1f1f1;
   }
   *::-webkit-scrollbar-thumb {
-    background: #888; 
+    background: #888;
     border-radius: 10px;
   }
   *::-webkit-scrollbar-thumb:hover {
-    background: #555; 
+    background: #555;
   }
   a,
   button {

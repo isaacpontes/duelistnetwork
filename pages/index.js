@@ -1,29 +1,38 @@
-import MainGrid from '../src/components/MainGrid';
-import Box from '../src/components/Box';
-import { AlurakutMenu, AlurakutProfileSidebarMenuDefault } from '../src/lib/AlurakutCommons';
-import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import MainGrid from '../src/components/MainGrid';
+import Box from '../src/components/Box';
+import { AlurakutMenu } from '../src/lib/AlurakutCommons';
+import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 import ProfileSidebar from '../src/components/ProfileSidebar';
-import { queryAllCommunities, saveCommunity } from '../src/services/communities';
+import { saveCommunity } from '../src/services/communities';
 import { OrkutNostalgicIconSet } from '../src/components/OrkutNostalgicIconSet';
 import slugify from '../src/lib/slugify';
+import nookies from 'nookies';
+import { queryUser, saveUserProfile } from '../src/services/users';
 
-export default function Home({ communitiesData }) {
-  const usuarioAleatorio = 'isaacpontes';
+export default function Home({ user, userFriends, userCommunities, currentGoogleUser }) {
+  const [datoUser, setDatoUser] = useState({});
   const [communities, setCommunities] = useState([]);
-  const [communitiesCount, setCommunitiesCount] = useState(0);
-  const [followers, setFollowers] = useState([]);
+  const [friends, setFriends] = useState([]);
 
   useEffect(async () => {
-    const githubResponse = await fetch(`https://api.github.com/users/${usuarioAleatorio}/followers`).then(data => data.json());
+    if (user === null) {
+      const newUser = {
+        name: currentGoogleUser.name,
+        googleId: currentGoogleUser.googleId,
+        avatarUrl: currentGoogleUser.imageUrl,
+        friends: null,
+        communities: null
+      }
 
-    const userFollowers = githubResponse.map(user => user.login)
-
-    setFollowers(userFollowers);
-
-    setCommunities(communitiesData.allCommunities);
-    setCommunitiesCount(communitiesData._allCommunitiesMeta.count);
+      const newUserData = await saveUserProfile(newUser);
+      setDatoUser(newUserData);
+    } else {
+      setDatoUser(user);
+      setFriends(userFriends);
+      setCommunities(userCommunities);
+    }
   }, []);
 
   async function handleCreateCommunity(event) {
@@ -33,42 +42,59 @@ export default function Home({ communitiesData }) {
     const title = formData.get('title');
     const imageUrl = formData.get('image');
     const slug = slugify(title);
+    const author = datoUser.id;
 
     const newCommunity = {
       title,
       imageUrl,
-      slug
+      slug,
+      author
     }
 
     const data = await saveCommunity(newCommunity);
-
-    const communitiesToUpdate = communities;
-    communitiesToUpdate.pop();
-    const updatedCommunities = [data.newRecord, ...communitiesToUpdate];
-    setCommunities(updatedCommunities);
-
     event.target.reset();
+    alert('Comunidade criada com sucesso!');
   }
 
   return (
     <>
-      <AlurakutMenu githubUser={usuarioAleatorio} />
+      <AlurakutMenu currentGoogleUser={currentGoogleUser} />
       <MainGrid>
-        {/* <Box style="grid-area: profileArea;"> */}
         <div className="profileArea" style={{ gridArea: 'profileArea' }}>
-          <ProfileSidebar githubUser={usuarioAleatorio} />
+          <ProfileSidebar currentGoogleUser={currentGoogleUser} />
         </div>
         <div className="welcomeArea" style={{ gridArea: 'welcomeArea' }}>
           <Box>
             <h1 className="title">
-              Bem vindo(a)
+              {`Bem vindo(a), ${currentGoogleUser.givenName}`}
             </h1>
 
             <OrkutNostalgicIconSet confiavel={3} legal={2} sexy={1} />
           </Box>
 
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+            <Box>
+              <h2 className="subTitle">Encontre outros duelistas!</h2>
+
+              <Link href="/profiles">
+                <button>
+                  Ver todas as usuários
+                </button>
+              </Link>
+            </Box>
+            <Box>
+              <h2 className="subTitle">Entre em uma comunidade!</h2>
+
+              <Link href="/communities">
+                <button>
+                  Ver todas as comunidades
+                </button>
+              </Link>
+            </Box>
+          </div>
+
           <Box>
-            <h2 className="subTitle">O que você deseja fazer?</h2>
+            <h2 className="subTitle">Que tal criar uma comunidade para o seu deck favorito?</h2>
 
             <form onSubmit={handleCreateCommunity}>
               <div>
@@ -99,16 +125,16 @@ export default function Home({ communitiesData }) {
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Amigos ({followers.length})
+              Amigos ({friends.length})
             </h2>
 
             <ul>
-              {followers.map((follower) => {
+              {friends.slice(0, 6).map((friend) => {
                 return (
-                  <li key={follower}>
-                    <a href={`/users/${follower}`}>
-                      <img src={`https://github.com/${follower}.png`} />
-                      <span>{follower}</span>
+                  <li key={friend.id}>
+                    <a href={`/users/${friend.id}`}>
+                      <img src={friend.avatarUrl} />
+                      <span>{friend.name}</span>
                     </a>
                   </li>
                 )
@@ -123,14 +149,14 @@ export default function Home({ communitiesData }) {
           </ProfileRelationsBoxWrapper>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Comunidades ({communitiesCount})
+              Comunidades ({communities.length})
             </h2>
 
             <ul>
-              {communities.map((community) => {
+              {communities?.slice(0, 6).map((community) => {
                 return (
                   <li key={community.id}>
-                    <a href={`/communities/${community.slug}`}>
+                    <a href={`/communities/${community.id}`}>
                       <img src={community.imageUrl} alt={community.title} />
                       <span>{community.title}</span>
                     </a>
@@ -152,11 +178,30 @@ export default function Home({ communitiesData }) {
 }
 
 export async function getServerSideProps(context) {
-  const communitiesData = await queryAllCommunities();
+  const userCookie = nookies.get(context).CURRENT_USER;
+
+  if (!userCookie) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false
+      }
+    }
+  }
+
+  const currentGoogleUser = JSON.parse(userCookie);
+
+  const user = await queryUser(currentGoogleUser.googleId);
+
+  const userFriends = user?.friends ?? [];
+  const userCommunities = user?.communities ?? [];
 
   return {
     props: {
-      communitiesData
+      user,
+      userFriends,
+      userCommunities,
+      currentGoogleUser
     },
   }
 }

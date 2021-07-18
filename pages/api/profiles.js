@@ -1,18 +1,19 @@
 import { SiteClient } from 'datocms-client';
 
-export default async function saveCommunity(request, response) {
+export default async function saveProfile(request, response) {
   if (request.method === 'POST') {
     const TOKEN = process.env.DATO_FULL_ACCESS_API_TOKEN;
     const client = new SiteClient(TOKEN);
 
-    const { title, imageUrl, slug, author } = request.body;
+    const { name, googleId, avatarUrl, friends, communities } = request.body;
 
     const newRecord = await client.items.create({
-      itemType: '972857',
-      title,
-      imageUrl,
-      slug,
-      author,
+      itemType: '976590',
+      name,
+      googleId,
+      avatarUrl,
+      friends,
+      communities,
     });
 
     response.json({
@@ -24,5 +25,5 @@ export default async function saveCommunity(request, response) {
 
   response.status(404).json({
     message: 'Nothing here yet, sorry :('
-  })
+  });
 }

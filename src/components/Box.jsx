@@ -3,8 +3,9 @@ import styled from 'styled-components';
 const Box = styled.div`
   background: #FFFFFF;
   border-radius: 8px;
-
+  display: block;
   padding: 16px;
+  width: 100%;
 
   /* CSS Pré-Pronto */
   margin-bottom: 10px;

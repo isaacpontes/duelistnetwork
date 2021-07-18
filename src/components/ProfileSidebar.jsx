@@ -3,22 +3,23 @@ import { AlurakutProfileSidebarMenuDefault } from "../lib/AlurakutCommons";
 import Box from "./Box";
 
 export default function ProfileSidebar(propriedades) {
-    return (
-        <Box as="aside">
-            <ProfileSidebar.Avatar src={`https://github.com/${propriedades.githubUser}.png`} />
-            <hr />
+  return (
+    <Box as="aside">
+      <ProfileSidebar.Avatar src={propriedades.currentGoogleUser.imageUrl} />
+      <hr />
 
-            <a className="boxLink" href={`https://github.com/${propriedades.githubUser}.png`}>
-                @{propriedades.githubUser}
-            </a>
-            <hr />
+      <a className="boxLink" href={propriedades.currentGoogleUser.imageUrl}>
+        {propriedades.currentGoogleUser.name}
+      </a>
+      <hr />
 
-            <AlurakutProfileSidebarMenuDefault />
-        </Box>
-    )
+      <AlurakutProfileSidebarMenuDefault />
+    </Box>
+  )
 }
 
 ProfileSidebar.Avatar = styled.img`
-    border-radius: 8px;
-    max-height: 128px;
+  width: 100%;
+  border-radius: 8px;
+  max-height: 128px;
 `;
