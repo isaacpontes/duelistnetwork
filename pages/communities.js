@@ -100,10 +100,31 @@ const EntriesGrid = styled.ul`
 
 export default function Communities({ user, allCommunities, currentGoogleUser }) {
   const [communities, setCommunities] = useState([]);
+  const [isJoining, setIsJoining] = useState(false);
 
   useEffect(async () => {
     setCommunities(allCommunities);
   }, []);
+
+  async function handleJoinCommunity(event) {
+    event.preventDefault();
+    setIsJoining(true);
+    const formData = new FormData(event.target);
+
+    const community = formData.get('community');
+    const title = formData.get('title');
+
+    const response = await joinCommunity(user.id, community);
+
+    setIsJoining(false);
+
+    if (response.updated) {
+      alert(`Você entrou na comunidade ${title}.`);
+      return;
+    }
+
+    alert('Parece que você já é membro dessa comunidade.')
+  }
 
   return (
     <>
@@ -121,16 +142,13 @@ export default function Communities({ user, allCommunities, currentGoogleUser })
                     <img src={community.imageUrl} alt={community.title} />
                     <span>{community.title}</span>
                   </a>
-                  <button
-                    onClick={() => {
-                      const userCommunities = user.communities.map(item => item.id);
-                      const communitiesToUpdate = [...userCommunities, community.id];
-                      joinCommunity(user.id, communitiesToUpdate);
-                      alert(`Você entrou na comunidade ${community.title}`);
-                    }}
-                  >
-                    Entrar
-                  </button>
+                  <form onSubmit={handleJoinCommunity}>
+                    <input type="hidden" name="community" value={community.id} />
+                    <input type="hidden" name="title" value={community.title} />
+                    <button type="submit" disabled={isJoining ? true : false}>
+                      {isJoining ? 'Entrando...' : 'Entrar'}
+                    </button>
+                  </form>
                 </li>
               )
             })}

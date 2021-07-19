@@ -5,15 +5,21 @@ export default async function joinCommunity(request, response) {
     const TOKEN = process.env.DATO_FULL_ACCESS_API_TOKEN;
     const client = new SiteClient(TOKEN);
 
-    const { profileId, communities } = request.body;
+    const { profileId, communityId } = request.body;
 
-    await client.items.update(profileId, {
-      communities: communities,
-    });
+    const profileRecord = await client.items.find(profileId);
 
-    response.status(204);
+    if (!profileRecord.communities.includes(communityId)) {
+      const updatedCommunities = [communityId, ...profileRecord.communities];
 
-    return;
+      await client.items.update(profileId, {
+        communities: updatedCommunities,
+      });
+
+      return response.json({ message: 'OK', updated: true });
+    }
+
+    return response.json({ message: 'OK', updated: false });
   }
 
   response.status(404).json({

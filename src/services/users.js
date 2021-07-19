@@ -152,14 +152,17 @@ async function saveUserProfile(profile) {
   return data;
 }
 
-async function joinCommunity(profileId, communities) {
-  await fetch('/api/join-community', {
+async function joinCommunity(profileId, communityId) {
+  const response = await fetch('/api/join-community', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ profileId, communities })
-  });
+    body: JSON.stringify({ profileId, communityId })
+  })
+    .then(response => response.json());
+
+  return response;
 }
 
 async function addFriend(userId, userFriends, friendId, friendFriends) {
