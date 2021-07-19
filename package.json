@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "datocms-client": "^3.4.11",
+    "dayjs": "^1.10.6",
     "next": "latest",
     "nookies": "^2.5.2",
     "react": "^17.0.2",

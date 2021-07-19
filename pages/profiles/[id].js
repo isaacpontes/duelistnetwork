@@ -5,9 +5,16 @@ import MainGrid from "../../src/components/MainGrid";
 import { queryProfileById, queryUser } from "../../src/services/users";
 import { ProfileRelationsBoxWrapper } from "../../src/components/ProfileRelations";
 import { OrkutNostalgicIconSet } from "../../src/components/OrkutNostalgicIconSet";
-import { saveDuelLog } from "../../src/services/duelLogs";
+import { queryUserDuelLogs, saveDuelLog } from "../../src/services/duelLogs";
+import DuelLog from "../../src/components/DuelLog";
+import { useEffect, useState } from "react";
 
-export default function Profile({ profile, currentDatoUser, currentGoogleUser }) {
+export default function Profile({ profile, currentDatoUser, duelLogs, currentGoogleUser }) {
+  const [allDuelLogs, setAllDuelLogs] = useState([]);
+
+  useEffect(() => {
+    setAllDuelLogs(duelLogs);
+  })
 
   async function handlePostDuelLog(event) {
     event.preventDefault();
@@ -25,7 +32,6 @@ export default function Profile({ profile, currentDatoUser, currentGoogleUser })
       opponent
     }
 
-    console.log(newDuelLog);
     const data = await saveDuelLog(newDuelLog);
     event.target.reset();
   }
@@ -95,6 +101,12 @@ export default function Profile({ profile, currentDatoUser, currentGoogleUser })
 
           <Box>
             <h2 className="subTitle">Duelos</h2>
+
+            {allDuelLogs.map((duelLog) => {
+              return (
+                <DuelLog key={duelLog.id} duelLog={duelLog} />
+              )
+            })}
           </Box>
         </div>
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
@@ -159,11 +171,13 @@ export async function getServerSideProps(context) {
   const { id } = context.params;
 
   const profile = await queryProfileById(id);
+  const duelLogs = await queryUserDuelLogs(id);
 
   return {
     props: {
       profile,
       currentDatoUser,
+      duelLogs,
       currentGoogleUser
     },
   }
