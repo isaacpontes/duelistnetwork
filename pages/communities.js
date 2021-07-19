@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Box from '../src/components/Box';
 import { AlurakutMenu } from '../src/lib/AlurakutCommons';
@@ -6,6 +5,7 @@ import { queryAllCommunities } from '../src/services/communities';
 import nookies from 'nookies';
 import styled from 'styled-components';
 import { joinCommunity, queryUser } from '../src/services/users';
+import { useRouter } from 'next/router';
 
 const Container = styled.div`
   padding: 2rem 1rem;
@@ -97,7 +97,16 @@ const EntriesGrid = styled.ul`
   }
 `;
 
-export default function Communities({ user, allCommunities, currentGoogleUser }) {
+const PaginationButtons = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+  margin-top: 1rem;
+`;
+
+export default function Communities({ user, allCommunities, _allCommunitiesMeta, currentGoogleUser }) {
+  const router = useRouter();
+  const { page } = router.query;
   const [communities, setCommunities] = useState([]);
   const [isJoining, setIsJoining] = useState(false);
 
@@ -123,6 +132,12 @@ export default function Communities({ user, allCommunities, currentGoogleUser })
     }
 
     alert('Parece que você já é membro dessa comunidade.');
+  }
+
+  function isLastPage() {
+    const totalEntries = _allCommunitiesMeta.count;
+    const currentPage = page ?? 0;
+    return totalEntries / (currentPage + 1) <= 20 ? true : false;
   }
 
   return (
@@ -152,6 +167,29 @@ export default function Communities({ user, allCommunities, currentGoogleUser })
               )
             })}
           </EntriesGrid>
+
+          <PaginationButtons>
+            <form>
+              <input
+                type='hidden'
+                name='page'
+                value={typeof page === 'number' ? page - 1 : 0}
+              />
+              <button disabled={!page || page === '0' ? true : false}>
+                Página Anterior
+              </button>
+            </form>
+            <form>
+              <input
+                type='hidden'
+                name='page'
+                value={typeof page === 'number' ? page + 1 : 1}
+              />
+              <button disabled={isLastPage() ? true : false}>
+                Página Seguinte
+              </button>
+            </form>
+          </PaginationButtons>
         </Box>
       </Container>
     </>
@@ -160,6 +198,7 @@ export default function Communities({ user, allCommunities, currentGoogleUser })
 
 export async function getServerSideProps(context) {
   const userCookie = nookies.get(context).CURRENT_USER;
+  const { page } = context.query;
 
   if (!userCookie) {
     return {
@@ -174,12 +213,15 @@ export async function getServerSideProps(context) {
 
   const user = await queryUser(currentGoogleUser.googleId);
 
-  const allCommunities = await queryAllCommunities(currentGoogleUser.googleId);
+  const response = await queryAllCommunities(page);
+
+  const { allCommunities, _allCommunitiesMeta } = response;
 
   return {
     props: {
       user,
       allCommunities,
+      _allCommunitiesMeta,
       currentGoogleUser
     },
   }

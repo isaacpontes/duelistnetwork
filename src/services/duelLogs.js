@@ -40,7 +40,7 @@ async function queryUserDuelLogs(id) {
 }
 
 async function saveDuelLog(newDuelLog) {
-  const data = await fetch('/api/duel-logs', {
+  const response = await fetch('/api/duel-logs', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ async function saveDuelLog(newDuelLog) {
     body: JSON.stringify(newDuelLog)
   }).then(response => response.json());
 
-  return data;
+  return response;
 }
 
 export { queryUserDuelLogs, saveDuelLog };
