@@ -101,10 +101,32 @@ const EntriesGrid = styled.ul`
 export default function Profiles({ user, allProfiles, currentGoogleUser }) {
   const router = useRouter();
   const [profiles, setProfiles] = useState([]);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(async () => {
     setProfiles(allProfiles);
   }, []);
+
+  async function handleAddFriend(event) {
+    event.preventDefault();
+    setIsAdding(true);
+    const formData = new FormData(event.target);
+
+    const profile = formData.get('profile');
+    const name = formData.get('name');
+
+    const response = await addFriend(user.id, profile);
+
+    setIsAdding(false);
+
+    if (response.updated) {
+      alert(`Você agora é amigo de ${name}`);
+      return;
+    }
+
+    alert(`Parece que você já é amigo de ${name}.`);
+
+  }
 
   return (
     <>
@@ -122,23 +144,13 @@ export default function Profiles({ user, allProfiles, currentGoogleUser }) {
                     <img src={profile.avatarUrl} alt={profile.name} />
                     <span>{profile.name}</span>
                   </a>
-                  <button
-                    onClick={() => {
-                      const userFriends = user.friends.map(item => item.id);
-                      const userFriendsToUpdate = [...userFriends, profile.id];
-
-                      const friendFriends = profile.friends.map(item => item.id);
-                      const friendFriendsToUpdate = [...friendFriends, user.id];
-
-                      addFriend(user.id, userFriendsToUpdate, profile.id, friendFriendsToUpdate)
-                        .then(response => {
-                          router.push('/');
-                          return response && alert(`Você agora é amigo de ${profile.name}`);
-                        });
-                    }}
-                  >
-                    Adicionar
-                  </button>
+                  <form onSubmit={handleAddFriend}>
+                    <input type="hidden" name="profile" value={profile.id} />
+                    <input type="hidden" name="name" value={profile.name} />
+                    <button type="submit" disabled={isAdding ? true : false}>
+                      {isAdding ? 'Adicionando...' : 'Adicionar'}
+                    </button>
+                  </form>
                 </li>
               )
             })}

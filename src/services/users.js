@@ -165,15 +165,16 @@ async function joinCommunity(profileId, communityId) {
   return response;
 }
 
-async function addFriend(userId, userFriends, friendId, friendFriends) {
+async function addFriend(userId, friendId) {
   const response = await fetch('/api/add-friend', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ userId, userFriends, friendId, friendFriends })
-  }).then((response) => response.json());
-  console.log(response);
+    body: JSON.stringify({ userId, friendId })
+  })
+    .then((response) => response.json());
+
   return response;
 }
 

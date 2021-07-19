@@ -5,17 +5,28 @@ export default async function addFriend(request, response) {
     const TOKEN = process.env.DATO_FULL_ACCESS_API_TOKEN;
     const client = new SiteClient(TOKEN);
 
-    const { userId, userFriends, friendId, friendFriends } = request.body;
+    const { userId, friendId } = request.body;
 
-    await client.items.update(userId, {
-      friends: userFriends,
-    });
+    const userRecord = await client.items.find(userId);
+    const friendRecord = await client.items.find(friendId);
 
-    await client.items.update(friendId, {
-      friends: friendFriends,
-    });
+    if (!userRecord.friends.includes(friendId) && !friendRecord.friends.includes(userId)) {
 
-    return response.json({ message: 'OK', updated: true });
+      const updatedUserFriends = [friendId, ...userRecord.friends];
+      const updatedFriendFriends = [userId, ...friendRecord.friends];
+
+      await client.items.update(userId, {
+        friends: updatedUserFriends,
+      });
+
+      await client.items.update(friendId, {
+        friends: updatedFriendFriends,
+      });
+
+      return response.json({ message: 'OK', updated: true });
+    }
+
+    return response.json({ message: 'OK', updated: false });
   }
 
   response.status(404).json({

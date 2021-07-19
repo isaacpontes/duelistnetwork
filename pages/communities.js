@@ -123,7 +123,7 @@ export default function Communities({ user, allCommunities, currentGoogleUser })
       return;
     }
 
-    alert('Parece que você já é membro dessa comunidade.')
+    alert('Parece que você já é membro dessa comunidade.');
   }
 
   return (
