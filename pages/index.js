@@ -133,7 +133,7 @@ export default function Home({ user, userFriends, userCommunities, duelLogs, cur
           <Box>
             <h2 className="subTitle">Seus Duelos Recentes</h2>
 
-            {allDuelLogs.map((duelLog) => {
+            {allDuelLogs?.map((duelLog) => {
               return (
                 <DuelLog key={duelLog.id} duelLog={duelLog} />
               )
@@ -143,11 +143,11 @@ export default function Home({ user, userFriends, userCommunities, duelLogs, cur
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Amigos ({friends.length})
+              Amigos ({friends?.length})
             </h2>
 
             <ul>
-              {friends.slice(0, 6).map((friend) => {
+              {friends?.slice(0, 6).map((friend) => {
                 return (
                   <li key={friend.id}>
                     <a href={`/profiles/${friend.id}`}>
@@ -167,7 +167,7 @@ export default function Home({ user, userFriends, userCommunities, duelLogs, cur
           </ProfileRelationsBoxWrapper>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Comunidades ({communities.length})
+              Comunidades ({communities?.length})
             </h2>
 
             <ul>

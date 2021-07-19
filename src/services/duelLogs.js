@@ -11,7 +11,7 @@ async function queryUserDuelLogs(id) {
     body: JSON.stringify({
       query: `{
         allDuelLogs (filter: {
-          opponent: { eq: "${id}" }
+          opponent: { eq: "${id ?? 0}" }
         }) {
           id
           comment
