@@ -15,6 +15,14 @@ export default async function saveCommunity(request, response) {
       author,
     });
 
+    const authorRecord = await client.items.find(author);
+    const updatedCommunities = [newRecord.id, ...authorRecord.communities];
+    console.log(updatedCommunities);
+
+    await client.items.update(author, {
+      communities: updatedCommunities
+    });
+
     response.json({
       newRecord
     });

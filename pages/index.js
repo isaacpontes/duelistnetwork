@@ -54,6 +54,9 @@ export default function Home({ user, userFriends, userCommunities, currentGoogle
     const data = await saveCommunity(newCommunity);
     event.target.reset();
     alert('Comunidade criada com sucesso!');
+
+    const updatedCommunities = [data.newRecord, ...communities];
+    setCommunities(updatedCommunities);
   }
 
   return (
