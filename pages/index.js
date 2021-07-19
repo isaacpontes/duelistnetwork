@@ -210,7 +210,7 @@ export async function getServerSideProps(context) {
   const currentGoogleUser = JSON.parse(userCookie);
 
   const user = await queryUser(currentGoogleUser.googleId);
-  const duelLogs = await queryUserDuelLogs(user.id);
+  const duelLogs = await queryUserDuelLogs(user?.id);
 
   const userFriends = user?.friends ?? [];
   const userCommunities = user?.communities ?? [];
