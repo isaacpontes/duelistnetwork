@@ -10,5 +10,6 @@ Projeto construído durante a 3ª Imersão React da Alura.
 - Styled Components
 - DatoCMS
 - GraphQL
+- Login com Google e Oauth2
 
 Link da demonstração da aplicação: https://duelistnetwork.vercel.app
