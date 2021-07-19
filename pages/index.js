@@ -170,7 +170,7 @@ export default function Home({ user, userFriends, userCommunities, currentGoogle
 
             <Link href="/comunidades">
               <a className="boxLink">
-                Ver todos
+                Ver todas
               </a>
             </Link>
           </ProfileRelationsBoxWrapper>

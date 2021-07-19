@@ -8,6 +8,7 @@ import { OrkutNostalgicIconSet } from "../../src/components/OrkutNostalgicIconSe
 import { queryUserDuelLogs, saveDuelLog } from "../../src/services/duelLogs";
 import DuelLog from "../../src/components/DuelLog";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Profile({ profile, currentDatoUser, duelLogs, currentGoogleUser }) {
   const [allDuelLogs, setAllDuelLogs] = useState([]);
@@ -112,11 +113,11 @@ export default function Profile({ profile, currentDatoUser, duelLogs, currentGoo
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Amigos
+              Amigos ({profile.friends?.length})
             </h2>
 
             <ul>
-              {profile.friends?.map((profile) => {
+              {profile.friends?.slice(0, 6).map((profile) => {
                 return (
                   <li key={profile.id}>
                     <a href={`/profiles/${profile.id}`}>
@@ -127,14 +128,20 @@ export default function Profile({ profile, currentDatoUser, duelLogs, currentGoo
                 )
               })}
             </ul>
+
+            <Link href="/comunidades">
+              <a className="boxLink">
+                Ver todos
+              </a>
+            </Link>
           </ProfileRelationsBoxWrapper>
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">
-              Comunidades
+              Comunidades ({profile.communities?.length})
             </h2>
 
             <ul>
-              {profile.communities?.map((community) => {
+              {profile.communities?.slice(0, 6).map((community) => {
                 return (
                   <li key={community.id}>
                     <a href={`/communities/${community.id}`}>
@@ -145,6 +152,12 @@ export default function Profile({ profile, currentDatoUser, duelLogs, currentGoo
                 )
               })}
             </ul>
+
+            <Link href="/comunidades">
+              <a className="boxLink">
+                Ver todas
+              </a>
+            </Link>
           </ProfileRelationsBoxWrapper>
         </div>
       </MainGrid>
