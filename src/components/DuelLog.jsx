@@ -45,6 +45,9 @@ DuelLog.Title = styled.header`
     text-decoration: none;
 
     img {
+      object-fit: cover;
+      background-position: center center;
+      position: relative;
       height: 48px;
       width: 48px;
       border-radius: 12px;

@@ -10,11 +10,15 @@ import { OrkutNostalgicIconSet } from '../src/components/OrkutNostalgicIconSet';
 import slugify from '../src/lib/slugify';
 import nookies from 'nookies';
 import { queryUser, saveUserProfile } from '../src/services/users';
+import { queryUserDuelLogs } from '../src/services/duelLogs';
+import DuelLog from '../src/components/DuelLog';
 
-export default function Home({ user, userFriends, userCommunities, currentGoogleUser }) {
+export default function Home({ user, userFriends, userCommunities, duelLogs, currentGoogleUser }) {
   const [datoUser, setDatoUser] = useState({});
   const [communities, setCommunities] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [allDuelLogs, setAllDuelLogs] = useState([]);
+
 
   useEffect(async () => {
     if (user === null) {
@@ -32,6 +36,7 @@ export default function Home({ user, userFriends, userCommunities, currentGoogle
       setDatoUser(user);
       setFriends(userFriends);
       setCommunities(userCommunities);
+      setAllDuelLogs(duelLogs);
     }
   }, []);
 
@@ -124,6 +129,16 @@ export default function Home({ user, userFriends, userCommunities, currentGoogle
               </button>
             </form>
           </Box>
+
+          <Box>
+            <h2 className="subTitle">Seus Duelos Recentes</h2>
+
+            {allDuelLogs.map((duelLog) => {
+              return (
+                <DuelLog key={duelLog.id} duelLog={duelLog} />
+              )
+            })}
+          </Box>
         </div>
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
           <ProfileRelationsBoxWrapper>
@@ -195,6 +210,7 @@ export async function getServerSideProps(context) {
   const currentGoogleUser = JSON.parse(userCookie);
 
   const user = await queryUser(currentGoogleUser.googleId);
+  const duelLogs = await queryUserDuelLogs(user.id);
 
   const userFriends = user?.friends ?? [];
   const userCommunities = user?.communities ?? [];
@@ -204,6 +220,7 @@ export async function getServerSideProps(context) {
       user,
       userFriends,
       userCommunities,
+      duelLogs,
       currentGoogleUser
     },
   }
