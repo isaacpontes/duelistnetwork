@@ -23,7 +23,6 @@ const EntriesGrid = styled.ul`
   display: grid;
   grid-gap: 8px;
   grid-template-columns: 1fr 1fr 1fr;
-  max-height: 220px;
   list-style: none;
 
   @media(min-width: 512px) {
@@ -131,7 +130,7 @@ export default function Communities({ user, allCommunities, currentGoogleUser })
       <AlurakutMenu currentGoogleUser={currentGoogleUser} />
 
       <Container>
-        <Box style={{ height: '100%' }}>
+        <Box>
           <h2 className="subTitle">Entre em uma comunidade!</h2>
 
           <EntriesGrid>

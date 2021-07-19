@@ -1,7 +1,7 @@
 const token = process.env.DATO_READ_ONLY_API_TOKEN;
 
-async function queryAllProfiles() {
-  const profiles = await fetch('https://graphql.datocms.com/', {
+async function queryAllProfiles(page = 0, pageSize = 20) {
+  const response = await fetch('https://graphql.datocms.com/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -10,16 +10,22 @@ async function queryAllProfiles() {
     },
     body: JSON.stringify({
       query: `{
-          allProfiles {
+        allProfiles (
+          first: ${pageSize}
+          skip: ${page * pageSize}
+        ) {
+          id
+          name
+          avatarUrl
+          googleId
+          friends {
             id
-            name
-            avatarUrl
-            googleId
-            friends {
-              id
-            }
           }
-        }`
+        }
+        _allProfilesMeta {
+          count
+        }
+      }`
     }),
   })
     .then(res => res.json())
@@ -27,7 +33,7 @@ async function queryAllProfiles() {
       console.log(error);
     });
 
-  return profiles.data.allProfiles;
+  return response.data;
 }
 
 async function queryProfilesByCommunityId(id) {

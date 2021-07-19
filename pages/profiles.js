@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Box from '../src/components/Box';
 import { AlurakutMenu } from '../src/lib/AlurakutCommons';
@@ -23,7 +22,6 @@ const EntriesGrid = styled.ul`
   display: grid;
   grid-gap: 8px;
   grid-template-columns: 1fr 1fr 1fr;
-  max-height: 220px;
   list-style: none;
 
   @media(min-width: 512px) {
@@ -98,8 +96,9 @@ const EntriesGrid = styled.ul`
   }
 `;
 
-export default function Profiles({ user, allProfiles, currentGoogleUser }) {
+export default function Profiles({ user, allProfiles, _allProfilesMeta, currentGoogleUser }) {
   const router = useRouter();
+  const { page } = router.query;
   const [profiles, setProfiles] = useState([]);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -125,7 +124,12 @@ export default function Profiles({ user, allProfiles, currentGoogleUser }) {
     }
 
     alert(`Parece que você já é amigo de ${name}.`);
+  }
 
+  function isLastPage() {
+    const totalEntries = _allProfilesMeta.count;
+    const currentPage = page ?? 0;
+    return totalEntries / (currentPage + 1) <= 20 ? true : false;
   }
 
   return (
@@ -133,11 +137,11 @@ export default function Profiles({ user, allProfiles, currentGoogleUser }) {
       <AlurakutMenu currentGoogleUser={currentGoogleUser} />
 
       <Container>
-        <Box style={{ height: '100%' }}>
+        <Box>
           <h2 className="subTitle">Adicione seu colegas duelistas!</h2>
 
           <EntriesGrid>
-            {profiles?.map((profile) => {
+            {profiles.map((profile) => {
               return (
                 <li key={profile.id}>
                   <a href={`/profiles/${profile.id}`}>
@@ -155,6 +159,36 @@ export default function Profiles({ user, allProfiles, currentGoogleUser }) {
               )
             })}
           </EntriesGrid>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: '.5rem',
+              marginTop: '1rem'
+            }}
+          >
+            <form>
+              <input
+                type='hidden'
+                name='page'
+                value={typeof page === 'number' ? page - 1 : 0}
+              />
+              <button disabled={!page || page === '0' ? true : false}>
+                Página Anterior
+              </button>
+            </form>
+            <form>
+              <input
+                type='hidden'
+                name='page'
+                value={typeof page === 'number' ? page + 1 : 1}
+              />
+              <button disabled={isLastPage() ? true : false}>
+                Página Seguinte
+              </button>
+            </form>
+          </div>
         </Box>
       </Container>
     </>
@@ -163,6 +197,7 @@ export default function Profiles({ user, allProfiles, currentGoogleUser }) {
 
 export async function getServerSideProps(context) {
   const userCookie = nookies.get(context).CURRENT_USER;
+  const { page, pageSize } = context.query;
 
   if (!userCookie) {
     return {
@@ -177,12 +212,15 @@ export async function getServerSideProps(context) {
 
   const user = await queryUser(currentGoogleUser.googleId);
 
-  const allProfiles = await queryAllProfiles(currentGoogleUser.googleId);
+  const response = await queryAllProfiles(page);
+
+  const { allProfiles, _allProfilesMeta } = response;
 
   return {
     props: {
       user,
       allProfiles,
+      _allProfilesMeta,
       currentGoogleUser
     },
   }

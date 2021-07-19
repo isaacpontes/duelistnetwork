@@ -6,6 +6,7 @@ const Box = styled.div`
   display: block;
   padding: 16px;
   width: 100%;
+  position: relative;
 
   /* CSS Pré-Pronto */
   margin-bottom: 10px;
